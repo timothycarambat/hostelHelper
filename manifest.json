@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+  "name": "Hostel Helper",
+  "short_name": "Hostel Helper",
+  "version": "1.0",
+  "description": "Quickly Summarize all reviews a Hostel has on hostelworld.com. Get the gender distribution and average age with a single click!",
+  "permissions": [
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_title": "Summarize Hostel - just click and wait!"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.hostelworld.com/hosteldetails.php/*/*/*"
+      ],
+      "js": [
+        "jquery-3.1.1.min.js","bootstrap.min.js",
+        "content.js","modal.js"]
+    }
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+        }
+}
