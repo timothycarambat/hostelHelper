@@ -15,6 +15,8 @@ function summarizer() {
   const REVIEWERS = getAllReviews(propID, pageCount);
   var averageAge = calcAverageAge(REVIEWERS);
   var {males,females,other} = calcGenderRatio(REVIEWERS);
+  var {ageData} = calcAgeRatio(REVIEWERS);
+  var {countryData} = calcCountryRatios(REVIEWERS);
 }
 
 function getReviewCount(propID){
@@ -82,6 +84,34 @@ function calcAverageAge(REVIEWERS) {
   return Math.round(averageAge/reviewCount)
 }
 
+function calcAgeRatio(REVIEWERS) {
+  var $ageRatio = $('#ageRatio');
+  var ageGroups = {'18-24':0, '25-30':0, '31-40':0, '41+': 0}
+  var reviewCount = REVIEWERS.length;
+
+  $ageRatio.removeClass('hidden');
+  REVIEWERS.forEach(function(reviewer,i){
+    let person = reviewer.reviewer
+    let ageGroup = person.ageGroup
+    ageGroups[ageGroup]++
+  })
+
+  var highest = Object.keys(ageGroups).reduce((a, b) => ageGroups[a] > ageGroups[b] ? a : b)
+  var content = ''
+  Object.keys(ageGroups).map((groupName) => {
+    content += `<p style='margin:0px; ${highest === groupName ? "font-weight:bold":"" }' >${groupName}: ${Math.round((ageGroups[groupName]/reviewCount)*100)}%</p>`
+  })
+
+  $ageRatio.html(`
+   <i style='color:#3c763d' class='fa fa-check'></i> Age Distribution Calculated </br>
+   <div style='margin-left: 17px; border-top: 1px solid whitesmoke; width: 181px;'>
+      ${content}
+    </div>
+   `);
+
+  return ageGroups;
+}
+
 function calcGenderRatio(REVIEWERS) {
   var $genderRatio = $('#genderRatio');
   var {males, females, other} = {males:0, females:0, other:0};
@@ -113,11 +143,49 @@ function calcGenderRatio(REVIEWERS) {
   $genderRatio.html(`
    <i style='color:#3c763d' class='fa fa-check'></i> Gender Distribution Calculated </br>
    <div style='margin-left: 17px; border-top: 1px solid whitesmoke; width: 181px;'>
-     <p style='margin:0px; ${highest === 'male'? "font-weight:bold":"" }' >Males ${Math.round((males/reviewCount)*100)}%</p>
-     <p style='margin:0px; ${highest === 'female'? "font-weight:bold":"" }' >Females ${Math.round((females/reviewCount)*100)}%</p>
-     <p style='margin:0px; ${highest === 'other'? "font-weight:bold":"" }' >Other ${Math.round((other/reviewCount)*100)}%</p>
+     <p style='margin:0px; ${highest === 'male'? "font-weight:bold":"" }' >Males: ${Math.round((males/reviewCount)*100)}%</p>
+     <p style='margin:0px; ${highest === 'female'? "font-weight:bold":"" }' >Females: ${Math.round((females/reviewCount)*100)}%</p>
+     <p style='margin:0px; ${highest === 'other'? "font-weight:bold":"" }' >Other: ${Math.round((other/reviewCount)*100)}%</p>
     </div>
    `);
 
   return {males:males, females:females, other:other}
+}
+
+function calcCountryRatios(REVIEWERS) {
+  var $countryRatio = $('#countryRatio');
+  var countries = {}
+  var reviewCount = REVIEWERS.length;
+
+  $countryRatio.removeClass('hidden');
+  REVIEWERS.forEach(function(reviewer,i){
+    let person = reviewer.reviewer
+    let country = person.nationality
+    if ( countries[country] ) {
+      countries[country]++
+    } else {
+      countries[country] = 1
+    }
+  })
+
+  var sortedCountries = Object.keys(countries).sort(function(a, b) { return countries[b] - countries[a] });
+  // if we have more than 5 countries than we can get a Top 5 and need to cut someone out
+  if ( sortedCountries.length > 5 ) {
+    sortedCountries = sortedCountries.slice(0,5)
+  }
+
+
+  var content = ''
+  sortedCountries.map((countryName, idx) => {
+    content += `<p style='margin:0px; ${idx === 0 ? "font-weight:bold":"" }' >${countryName}: ${Math.round((countries[countryName]/reviewCount)*100)}%</p>`
+  })
+
+  $countryRatio.html(`
+   <i style='color:#3c763d' class='fa fa-check'></i> Nationality Distribution Calculated ${Object.keys(countries).length > 5 ? `(Top 5 of ${Object.keys(countries).length})` : '' } </br>
+   <div style='margin-left: 17px; border-top: 1px solid whitesmoke; width: 181px;'>
+      ${content}
+    </div>
+   `);
+
+  return countries;
 }

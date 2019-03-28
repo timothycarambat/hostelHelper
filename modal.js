@@ -10,7 +10,9 @@ function modalText(title) {
             <li class='hidden' id='reviewCountStatus'> Getting Review Count <i class=' fa fa-cog fa-spin'></i> </li>
             <li class='hidden' id='combineReviews'> Getting Review Count <i class=' fa fa-cog fa-spin'></i> </li>
             <li class='hidden' id='averageAge'> Calculating Average Age <i class=' fa fa-cog fa-spin'></i> </li>
+            <li class='hidden' id='ageRatio'> Calculating Age Ratio <i class=' fa fa-cog fa-spin'></i> </li>
             <li class='hidden' id='genderRatio'> Calculating Gender Ratio <i class=' fa fa-cog fa-spin'></i> </li>
+            <li class='hidden' id='countryRatio'>Country of Origin <i class=' fa fa-cog fa-spin'></i> </li>
           </ul>
 
 
